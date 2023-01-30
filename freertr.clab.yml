@@ -1,0 +1,46 @@
+name: freertr
+
+topology:
+  nodes:
+    n1:
+      kind: linux
+      image: freertr/freertr-p4emu:latest
+      binds:
+        - cfgs/n1-sw.txt:/opt/freertr/run/n1-sw.txt
+      env:
+        FREERTR_HOSTNAME: n1
+        FREERTR_INTF_LIST: eth1 eth2
+    n2:
+      kind: linux
+      image: freertr/freertr-p4emu:latest
+      binds:
+        - cfgs/n2-sw.txt:/opt/freertr/run/n2-sw.txt
+      env:
+        FREERTR_HOSTNAME: n2
+        FREERTR_INTF_LIST: eth1 eth2
+    n3:
+      kind: linux
+      image: freertr/freertr-p4emu:latest
+      binds:
+        - cfgs/n3-sw.txt:/opt/freertr/run/n3-sw.txt
+      env:
+        FREERTR_HOSTNAME: n3
+        FREERTR_INTF_LIST: eth1 eth2
+    host1:
+      kind: linux
+      image: alpine:latest
+      exec:
+        - ip address add 192.168.1.10/24 dev eth1
+
+    host2:
+      kind: linux
+      image: alpine:latest
+      exec:
+        - ip address add 192.168.2.10/24 dev eth1
+
+  links:
+    - endpoints: ["n1:eth1","host1:eth1"]
+    - endpoints: ["n2:eth1","host2:eth1"]
+    - endpoints: ["n1:eth2","n2:eth2"]
+    - endpoints: ["n1:eth3","n3:eth1"]
+    - endpoints: ["n2:eth3","n3:eth2"]

@@ -1,0 +1,73 @@
+hostname n1
+buggy
+!
+vrf definition v1
+ exit
+!
+interface ethernet0
+ description freerouter@P4_CPU_PORT[veth0a]
+ no shutdown
+ no log-link-change
+ exit
+!
+interface sdn1
+ description freerouter@sdn1[eth1]
+ mtu 9000
+ vrf forwarding v1
+ ipv4 address 192.168.1.1 255.255.255.0
+ ipv6 address 2a01:e0a:159:2850::666 ffff:ffff:ffff:ffff::
+ ipv6 enable
+ no shutdown
+ no log-link-change
+ exit
+!
+interface sdn2
+ description freerouter@sdn2[eth2]
+ mtu 9000
+ vrf forwarding v1
+ ipv4 address 192.168.0.0 255.255.255.254
+ ipv6 address 2a01:e0a:159:2850::666 ffff:ffff:ffff:ffff::
+ ipv6 enable
+ no shutdown
+ no log-link-change
+ exit
+!
+interface sdn3
+ description freerouter@sdn3[eth3]
+ mtu 9000
+ vrf forwarding v1
+ ipv4 address 192.168.0.2 255.255.255.254
+ ipv6 address 2a01:e0a:159:2850::666 ffff:ffff:ffff:ffff::
+ ipv6 enable
+ no shutdown
+ no log-link-change
+ exit
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+server telnet tel
+ security protocol telnet
+ no exec authorization
+ no login authentication
+ vrf v1
+ exit
+!
+server p4lang p4
+ export-vrf v1 1
+ export-port sdn1 1 0
+ interconnect ethernet0
+ vrf v1
+ exit
+!
+end
